@@ -5,15 +5,25 @@ const myApiKey = "aa0ccf9b"
 const url = "http://www.omdbapi.com/"
 const placeHolderImg = "https://via.placeholder.com/148x222.png?text=No+Image+Available"
 
-let movieIDArray = localStorage.getItem("movieIDs")
-movieIDArray = JSON.parse(movieIDArray)
+let movieIDArray = localStorage.getItem("movieIDs") === null ? [] : JSON.parse(localStorage.getItem("movieIDs"))
 
 
 function render(){
-    movieIDArray.forEach(id =>{
-        console.log("rendered...")
-    fetchMovieInfo(url, id, myApiKey, watchlistMain)
-    })
+    watchlistMain.innerHTML = ""
+    movieIDArray = JSON.parse(localStorage.getItem("movieIDs"))
+    if(movieIDArray.length === 0){
+        console.log("no movies")
+        watchlistMain.innerHTML += `<div class="empty">
+        <!-- <i class="fa-solid fa-film"></i> -->
+        <img src="./images/empty-state.png">
+        <p>Start Exporting</p>
+    </div>`
+    }else{
+        movieIDArray.forEach(id =>{
+        fetchMovieInfo(url, id, myApiKey, watchlistMain)
+        })
+        // document.querySelector(".empty").style.display = "block" 
+    }
 }
 
 
@@ -21,7 +31,6 @@ function render(){
 //TODO: Try exporting functions and variables...
 
 function fetchMovieInfo(APIurl, Movieid, ApiKey, htmlEl) {
-    document.querySelector(".empty").style.display = "none" 
     fetch(`${APIurl}?i=${Movieid}&apikey=${ApiKey}`)
         .then(res => {
             if(res.ok){
@@ -52,17 +61,17 @@ htmlString = `
                 <p>${data.Runtime}</p>
                 <p>${data.Genre}</p>
                 <div class="add-movie" >
-                    <i class="fa-solid fa-circle-plus" 
+                    <i class="fa-solid fa-trash" 
                         data-id="${data.imdbID}"
                         id="add-movie">
                     </i>
-                    <p>Watchlist</p>
+                    <p>Remove</p>
                 </div>
             </div>
+        </div>
             <div class="bottom-section">
                 <p>${data.Plot}</p>
             </div>  
-        </div>
     </div>`
             
 return htmlString
@@ -71,19 +80,14 @@ return htmlString
 document.addEventListener("click", (e)=>{
     const movieID = e.target.dataset.id
     if(e.target.id === "add-movie"){
-        if(!movieIDArray.includes(movieID)){
-            movieIDArray.unshift(movieID)
-            
-        }else{
-            movieIDArray=  movieIDArray.filter(movie => movie !== movieID)
-        }
-        localStorage.setItem("movieIDs", JSON.stringify(movieIDArray))
-        render()
+        if(movieIDArray.includes(movieID)){
+            const updatedArray = movieIDArray.filter(movie => movie !== movieID)
+            movieIDArray = updatedArray
+            localStorage.setItem("movieIDs", JSON.stringify(movieIDArray))
+            render()
 
-        // const storedMovies = JSON.parse(localStorage.getItem("movieIDs"))
-        // storedMovies.forEach(id =>{
-        // fetchMovieInfo(url, id, myApiKey, watchlistMain)
-        // })
+         }
+         
         
         
     }

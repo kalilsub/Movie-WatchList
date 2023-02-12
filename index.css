@@ -133,7 +133,11 @@ form{
 }
 
 .movie-card {
-    display: flex;
+    display: grid;
+    grid-template-areas: 
+    "poster info"
+    "poster synopsis";
+    gap: 1em;
     width: 80%;
     margin: auto;
     /* border: solid black 1px; */
@@ -148,16 +152,24 @@ form{
 }
 
 .poster-container {
-    width: 27%;
+    grid-area: poster;
+    width: 100%;
     height: auto;
+    /* min-width: 140px; */
+    max-width: 200px;
 
 }
 
 .movie-info {
+    grid-area: info;
     width: 65%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+.bottom-section {
+    grid-area: synopsis;
 }
 
 .poster {
@@ -170,7 +182,7 @@ form{
 .mid-section,
 .add-movie {
     display: flex;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     
 }
 
@@ -195,4 +207,41 @@ form{
 
 .mid-section {
     justify-content: space-between;
+}
+
+/* ----- BIG SCREENS ----- */
+
+@media (min-width:1200px){
+    main{
+        display: grid;
+        grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+        gap: 1em;
+
+    }
+
+    header {
+        justify-content: space-around;
+        padding-bottom: 100px;
+        background-position: top 20% right;
+    }
+
+}
+
+
+/* ------------SMALL SCREEN---------- */
+
+
+@media (max-width: 600px) {
+    .movie-card {
+        grid-template-areas: "poster info"
+                            "synopsis synopsis";
+    }
+
+    .movie-info{
+        margin: 0 0.2em;
+    }
+
+    .poster-container{
+        min-width: 85px;
+    }
 }

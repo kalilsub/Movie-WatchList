@@ -50,13 +50,30 @@ formEl.addEventListener("submit", (e)=> {
 //TODO: refractor to ternary
 document.addEventListener("click", (e)=>{
     const movieID = e.target.dataset.id
+    const btn = e.target.parentElement
+
     if(e.target.id === "add-movie"){
         if(!movieIDArray.includes(movieID)){
             movieIDArray.unshift(movieID)
-            
+            btn.innerHTML = `
+            <i class="fa-solid fa-trash" 
+                                data-id="${movieID}"
+                                id="add-movie">
+                            </i>
+                            <p>Remove</p>
+            `
+            // const x = document.getElementsByClassName("add-movie")
+            // console.log(x[0].textContent += "bye")
             
         }else{
             movieIDArray=  movieIDArray.filter(movie => movie !== movieID)
+            btn.innerHTML = `
+            <i class="fa-solid fa-circle-plus" 
+                data-id="${movieID}"
+                id="add-movie">
+            </i>
+            <p>Watchlist</p>
+            `
         }
         localStorage.setItem("movieIDs", JSON.stringify(movieIDArray))
 
@@ -76,7 +93,10 @@ function fetchMovieInfo(APIurl, Movieid, ApiKey, htmlEl) {
                     }
                     throw new Error("Something wrong")
                 })
-                .then(movie => htmlEl.innerHTML += getMovieHtml(movie))
+                .then(movie =>  {
+                    htmlEl.innerHTML += getMovieHtml(movie)
+
+                })
                 .catch(error => console.log(error))
 }
 
@@ -99,17 +119,17 @@ function getMovieHtml(data) {
                         <p>${data.Runtime}</p>
                         <p>${data.Genre}</p>
                         <div class="add-movie" >
-                            <i class="fa-solid fa-circle-plus" 
-                                data-id="${data.imdbID}"
-                                id="add-movie">
+                            <i data-id="${data.imdbID}" id="add-movie"
+                                class= "fa-solid ${movieIDArray.includes(data.imdbID) ? "fa-trash" : "fa-circle-plus"}"
+                                >
                             </i>
-                            <p>Watchlist</p>
+                            <p>${movieIDArray.includes(data.imdbID) ? "Remove": "Watchlist"}</p>
                         </div>
                     </div>
+                </div>
                     <div class="bottom-section">
                         <p>${data.Plot}</p>
                     </div>  
-                </div>
             </div>`
                     
         return htmlString
